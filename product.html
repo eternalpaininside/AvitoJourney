@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Детали объявления - ТужорниПерни</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <main>
+        <div class="header">
+            <div class="logo">PLACE<br>HOLDER</div>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="🔍 Поиск объявлений" id="searchInput">
+            </div>
+            <div class="user-icon">👤</div>
+        </div>
+
+        <div class="product-detail-page">
+            <!-- Левая часть с информацией об объявлении -->
+            <div class="product-detail-left">
+                <a href="index.html" class="back-button">Назад к объявлениям</a>
+                
+                <!-- Карусель фотографий -->
+                <div class="product-carousel">
+                    <div class="carousel-wrapper">
+                        <button class="arrow-btn" id="prevBtn">←</button>
+                        
+                        <div class="carousel-container">
+                            <div class="carousel-track" id="carouselTrack">
+                                <!-- Медиафайлы будут добавлены через JS -->
+                            </div>
+                        </div>
+                        <button class="arrow-btn" id="nextBtn">→</button>
+                        <div class="indicators" id="indicators"></div>
+                        <div class="carousel-counter" id="carouselCounter">1/5</div>
+                    </div>
+                </div>
+                
+                <!-- Информация об объявлении (будет заполнена через JS) -->
+                <div class="product-info-container" id="productInfo">
+                    <div class="loading">
+                        <div style="font-size: 48px; margin-bottom: 20px;">⏳</div>
+                        <p>Загрузка данных объявления...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Правая часть (пустая для другого человека) -->
+            <div class="product-detail-right">
+                <div class="empty-sidebar">
+                    <h3>Место </h3>
+                    <p></p>
+                    <div style="margin-top: 30px; font-size: 48px; color: #ccc;">
+                        📍
+                    </div>
+                    <p style="margin-top: 20px; font-size: 12px; color: #999;">
+                        Это пространство 
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Модальное окно для полноэкранного просмотра -->
+        <div class="fullscreen-modal" id="fullscreenModal">
+            <div class="modal-close" id="modalClose">&times;</div>
+            <div class="modal-nav prev" id="modalPrev">‹</div>
+            <div class="modal-nav next" id="modalNext">›</div>
+            <div class="modal-content" id="modalContent">
+                <!-- Контент будет загружен динамически -->
+            </div>
+            <div class="modal-counter" id="modalCounter">1/5</div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>О компании</h3>
+                <p>ТужорниПерни — ваш надёжный помощник в мире путешествий. Работаем с 2026 года.</p>
+                <p>ИНН: 1234567890<br>
+                    ОГРН: 1234567890123<br>
+                    г. Пермь, ул. Аллея, д. 228</p>
+            </div>
+            <div class="footer-section">
+                <h3>Политика</h3>
+                <ul>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Условия использования</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Мы в соцсетях</h3>
+                <div class="social-links">
+                    <a href="#" aria-label="Telegram">📱 Telegram</a><br>
+                    <a href="#" aria-label="YouTube">▶️ YouTube</a><br>
+                    <a href="#" aria-label="VK">♿️ VK</a><br>
+                    <a href="#" aria-label="Instagram">📷 Instagram</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <a href="#" class="scroll-to-top" aria-label="Наверх"></a>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 ТужорниПерни. Все права защищены.</p>
+    </div>
+    
+    <script src="scripts.js"></script>
+</body>
+</html>
