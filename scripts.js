@@ -1,54 +1,71 @@
+// Функция для загрузки продуктов на главной странице
 async function loadProducts() {
     try {
         const response = await fetch('products.json');
         const products = await response.json();
         const productGrid = document.querySelector('.product-grid');
 
-        productGrid.innerHTML = '';
+        if (productGrid) {
+            productGrid.innerHTML = '';
 
-        products.forEach(product => {
-            const productElement = document.createElement('div');
-            productElement.className = 'product';
-            productElement.innerHTML = `
-    <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x200?text=Фото+нет'">
-    <div class="title-container">
-        <h3>${product.name}</h3>
-    </div>
-    <p>${product.description}</p>
-    <button class="zoom-button">Увеличить</button>
-`;
-            productGrid.appendChild(productElement);
-        });
+            products.forEach(product => {
+                const productElement = document.createElement('div');
+                productElement.className = 'product';
+                productElement.setAttribute('data-product-id', product.id);
+                
+                productElement.innerHTML = `
+                    <a href="product.html?id=${product.id}" class="product-link">
+                        <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x200?text=Фото+нет'">
+                        <div class="title-container">
+                            <h3>${product.name}</h3>
+                        </div>
+                        <p>${product.description}</p>
+                        <div class="product-price-preview">
+                            <span class="price">${product.price || 'Цена не указана'} ${product.currency || 'Руб.'}</span>
+                            <span class="location">📍 ${product.location || 'Местоположение не указано'}</span>
+                        </div>
+                    </a>
+                `;
+                
+                productGrid.appendChild(productElement);
+            });
 
-        attachZoomListeners();
+            // Добавляем обработчики кликов на карточки
+            document.querySelectorAll('.product-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const productId = this.closest('.product').getAttribute('data-product-id');
+                    window.location.href = `product.html?id=${productId}`;
+                });
+            });
+        }
+
     } catch (error) {
+        console.error('Ошибка загрузки объявлений:', error);
+        const productGrid = document.querySelector('.product-grid');
+        if (productGrid) {
+            productGrid.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <p style="color: #666; font-size: 18px;">Не удалось загрузить объявления. Пожалуйста, попробуйте позже.</p>
+                </div>
+            `;
+        }
     }
 }
 
-function attachZoomListeners() {
-    document.querySelectorAll('.zoom-button').forEach(button => {
-        button.addEventListener('click', function() {
-            const product = this.closest('.product');
-            if (product.style.transform === 'scale(1.2)') {
-                product.style.transform = 'scale(1)';
-            } else {
-                product.style.transform = 'scale(1.2)';
-            }
-        });
-    });
-}
+// Карусель для главной страницы
+function initMainCarousel() {
+    const carouselTrack = document.getElementById('carouselTrack');
+    const indicatorsContainer = document.getElementById('indicators');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
 
-const carouselTrack = document.getElementById('carouselTrack');
-        const indicatorsContainer = document.getElementById('indicators');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        
+    if (carouselTrack && indicatorsContainer && prevBtn && nextBtn) {
         const banners = carouselTrack.querySelectorAll('.banner');
         const totalBanners = banners.length;
         let currentIndex = 0;
         let autoPlayInterval;
 
-        // Создание точек-индикаторов
         function createIndicators() {
             for (let i = 0; i < totalBanners; i++) {
                 const dot = document.createElement('div');
@@ -59,14 +76,12 @@ const carouselTrack = document.getElementById('carouselTrack');
             }
         }
 
-        // Переход к конкретному слайду
         function goToSlide(index) {
             currentIndex = (index + totalBanners) % totalBanners;
             updateCarousel();
             resetAutoPlay();
         }
 
-        // Обновление позиции карусели и индикаторов
         function updateCarousel() {
             document.querySelectorAll('.banner').forEach((banner, index) => {
                 banner.classList.remove('left', 'center', 'right');
@@ -85,64 +100,489 @@ const carouselTrack = document.getElementById('carouselTrack');
             });
         }
 
-        // Следующий слайд
         function nextSlide() {
             currentIndex = (currentIndex + 1) % totalBanners;
             updateCarousel();
             resetAutoPlay();
         }
 
-        // Предыдущий слайд
         function prevSlide() {
             currentIndex = (currentIndex - 1 + totalBanners) % totalBanners;
             updateCarousel();
             resetAutoPlay();
         }
 
-        // Автоматическое переключение
         function startAutoPlay() {
             autoPlayInterval = setInterval(nextSlide, 5000);
         }
 
-        // Сброс автоматического переключения
         function resetAutoPlay() {
             clearInterval(autoPlayInterval);
             startAutoPlay();
         }
 
-        // Обработчики кнопок
         prevBtn.addEventListener('click', prevSlide);
         nextBtn.addEventListener('click', nextSlide);
 
-        // Инициализация
         createIndicators();
         updateCarousel();
         startAutoPlay();
 
-        // Пауза при наведении (опционально)
         carouselTrack.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
         carouselTrack.addEventListener('mouseleave', startAutoPlay);
+    }
+}
 
+// Функция для инициализации кнопки "Наверх"
+function initScrollToTop() {
+    const scrollToTopBtn = document.querySelector('.scroll-to-top');
+
+    if (scrollToTopBtn) {
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
+}
+
+// Функция для инициализации поля поиска
+function initSearchField() {
+    const searchInput = document.getElementById('searchInput');
+    
+    if (searchInput) {
+        const originalPlaceholder = searchInput.placeholder;
         
-window.addEventListener('DOMContentLoaded', loadProducts);
+        // При фокусе убираем эмодзи
+        searchInput.addEventListener('focus', function() {
+            this.classList.add('no-emoji', 'search-focused');
+            this.placeholder = originalPlaceholder.replace('🔍 ', '').replace('🔍', '');
+        });
+        
+        // При потере фокуса возвращаем эмодзи, если поле пустое
+        searchInput.addEventListener('blur', function() {
+            if (this.value === '') {
+                this.classList.remove('no-emoji', 'search-focused');
+                this.placeholder = originalPlaceholder;
+            }
+        });
+        
+        // Обработка отправки поиска
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const query = this.value.trim();
+                if (query) {
+                    alert(`Поиск: "${query}"\nВ реальном приложении здесь будет выполнен поиск объявлений.`);
+                    this.value = '';
+                    this.blur();
+                }
+            }
+        });
+    }
+}
 
-const scrollToTopBtn = document.querySelector('.scroll-to-top');
+// Функции для страницы product.html
+// Получаем ID продукта из URL
+function getProductIdFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('id');
+}
 
-if (scrollToTopBtn) {
-    window.addEventListener('scroll', () => {
-        if (window.pageYOffset > 300) {
-            scrollToTopBtn.classList.add('show');
-        } else {
-            scrollToTopBtn.classList.remove('show');
+// Функция для загрузки данных из JSON файла
+async function loadProductData() {
+    try {
+        const response = await fetch('product.json');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        const productData = await response.json();
+        return productData;
+    } catch (error) {
+        console.error('Ошибка загрузки данных:', error);
+        throw error;
+    }
+}
+
+// Функция для отображения ошибки
+function showError(message) {
+    const productInfo = document.getElementById('productInfo');
+    if (productInfo) {
+        productInfo.innerHTML = `
+            <div class="error-message">
+                <div style="font-size: 48px; margin-bottom: 20px;">❌</div>
+                <h3>Ошибка загрузки данных</h3>
+                <p>${message}</p>
+                <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #228B22; color: white; border: none; border-radius: 25px; cursor: pointer;">
+                    Повторить попытку
+                </button>
+            </div>
+        `;
+    }
+}
+
+// Глобальные переменные для управления полноэкранным просмотром
+let currentMediaItems = [];
+let currentFullscreenIndex = 0;
+
+// Функция для открытия медиафайла в полноэкранном режиме
+function openFullscreen(index) {
+    const modal = document.getElementById('fullscreenModal');
+    const modalContent = document.getElementById('modalContent');
+    const modalCounter = document.getElementById('modalCounter');
+    
+    currentFullscreenIndex = index;
+    const mediaItem = currentMediaItems[index];
+    
+    // Очищаем содержимое
+    modalContent.innerHTML = '';
+    
+    // Создаем элемент в зависимости от типа медиа
+    if (mediaItem.type === 'image') {
+        const img = document.createElement('img');
+        img.src = mediaItem.url;
+        img.alt = `Фото ${index + 1}`;
+        modalContent.appendChild(img);
+    } else if (mediaItem.type === 'video') {
+        const video = document.createElement('video');
+        video.src = mediaItem.url;
+        video.controls = true;
+        video.autoplay = true;
+        modalContent.appendChild(video);
+    }
+    
+    // Обновляем счетчик
+    if (modalCounter) {
+        modalCounter.textContent = `${index + 1}/${currentMediaItems.length}`;
+    }
+    
+    // Показываем модальное окно
+    modal.classList.add('active');
+    
+    // Блокируем прокрутку фона
+    document.body.style.overflow = 'hidden';
+}
+
+// Функция для закрытия полноэкранного режима
+function closeFullscreen() {
+    const modal = document.getElementById('fullscreenModal');
+    const modalContent = document.getElementById('modalContent');
+    
+    // Останавливаем видео, если оно воспроизводится
+    const video = modalContent.querySelector('video');
+    if (video) {
+        video.pause();
+    }
+    
+    // Скрываем модальное окно
+    modal.classList.remove('active');
+    
+    // Восстанавливаем прокрутку фона
+    document.body.style.overflow = 'auto';
+}
+
+// Функция для навигации по медиа в полноэкранном режиме
+function navigateFullscreen(direction) {
+    let newIndex = currentFullscreenIndex + direction;
+    
+    // Зацикливаем навигацию
+    if (newIndex < 0) {
+        newIndex = currentMediaItems.length - 1;
+    } else if (newIndex >= currentMediaItems.length) {
+        newIndex = 0;
+    }
+    
+    openFullscreen(newIndex);
+}
+
+// Функция для инициализации карусели продукта
+function initProductCarousel(mediaItems) {
+    const carouselTrack = document.getElementById('carouselTrack');
+    const indicatorsContainer = document.getElementById('indicators');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const carouselCounter = document.getElementById('carouselCounter');
+    
+    if (!carouselTrack || !indicatorsContainer) return;
+    
+    // Сохраняем медиафайлы для полноэкранного просмотра
+    currentMediaItems = mediaItems;
+    
+    // Очищаем карусель
+    carouselTrack.innerHTML = '';
+    
+    // Заполняем карусель медиафайлами
+    mediaItems.forEach((mediaItem, index) => {
+        const banner = document.createElement('div');
+        banner.className = 'banner';
+        
+        // Добавляем бейдж типа медиа
+        const typeBadge = document.createElement('div');
+        typeBadge.className = 'media-type-badge';
+        typeBadge.textContent = mediaItem.type === 'video' ? '▶ Видео' : '📷 Фото';
+        
+        // Добавляем медиа в зависимости от типа
+        if (mediaItem.type === 'image') {
+            banner.innerHTML = `
+                <img src="${mediaItem.url}" alt="Фото ${index + 1}" loading="lazy">
+                <div class="media-placeholder" style="display: none;">📷</div>
+            `;
+        } else if (mediaItem.type === 'video') {
+            banner.innerHTML = `
+                <video src="${mediaItem.url}" preload="metadata" poster="${mediaItem.thumbnail || ''}"></video>
+                <div class="media-placeholder" style="display: none;">▶</div>
+            `;
+        }
+        
+        // Добавляем бейдж
+        banner.appendChild(typeBadge);
+        
+        // Добавляем обработчик клика для открытия в полноэкранном режиме
+        banner.addEventListener('click', () => {
+            openFullscreen(index);
+        });
+        
+        carouselTrack.appendChild(banner);
     });
 
-    scrollToTopBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        window.scrollTo({
-            top: 0,
-            behavior: 'smooth'
+    const banners = carouselTrack.querySelectorAll('.banner');
+    const totalBanners = banners.length;
+    let currentIndex = 0;
+    let autoPlayInterval;
+    
+    function createIndicators() {
+        indicatorsContainer.innerHTML = '';
+        for (let i = 0; i < totalBanners; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => goToSlide(i));
+            indicatorsContainer.appendChild(dot);
+        }
+    }
+    
+    function goToSlide(index) {
+        currentIndex = (index + totalBanners) % totalBanners;
+        updateCarousel();
+        resetAutoPlay();
+    }
+    
+    function updateCarousel() {
+        document.querySelectorAll('.banner').forEach((banner, index) => {
+            banner.classList.remove('left', 'center', 'right');
+            
+            if (index === currentIndex) {
+                banner.classList.add('center');
+            } else if ((index - currentIndex + totalBanners) % totalBanners === 1) {
+                banner.classList.add('right');
+            } else if ((index - currentIndex + totalBanners) % totalBanners === totalBanners - 1) {
+                banner.classList.add('left');
+            }
         });
+        
+        document.querySelectorAll('.dot').forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+        
+        // Обновление счетчика
+        if (carouselCounter) {
+            carouselCounter.textContent = `${currentIndex + 1}/${totalBanners}`;
+        }
+    }
+    
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % totalBanners;
+        updateCarousel();
+        resetAutoPlay();
+    }
+    
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + totalBanners) % totalBanners;
+        updateCarousel();
+        resetAutoPlay();
+    }
+    
+    function startAutoPlay() {
+        autoPlayInterval = setInterval(nextSlide, 5000);
+    }
+    
+    function resetAutoPlay() {
+        clearInterval(autoPlayInterval);
+        startAutoPlay();
+    }
+    
+    // Добавляем обработчики событий
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    
+    createIndicators();
+    updateCarousel();
+    startAutoPlay();
+    
+    // Пауза при наведении
+    if (carouselTrack) {
+        carouselTrack.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
+        carouselTrack.addEventListener('mouseleave', startAutoPlay);
+    }
+}
+
+// Функция для отображения данных объявления
+function displayProductData(productData) {
+    const productInfo = document.getElementById('productInfo');
+    
+    if (productInfo) {
+        productInfo.innerHTML = `
+            <div class="product-header">
+                <h1 class="product-title">${productData.title || 'Название не указано'}</h1>
+                <div class="product-price">${productData.price || '0'} ${productData.currency || 'Руб.'}</div>
+            </div>
+            
+            <div class="product-location">
+                <div class="location-details">
+                    <span>📍 ${productData.location || 'Адрес не указан'}</span>
+                    ${productData.distance ? `<span class="distance">• ${productData.distance}</span>` : ''}
+                    <a href="#" class="show-map">Показать на карте</a>
+                </div>
+            </div>
+            
+            ${productData.tags && productData.tags.length > 0 ? `
+            <div class="product-tags">
+                ${productData.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+            </div>
+            ` : ''}
+            
+            ${productData.description ? `
+            <div class="description-section">
+                <h3>Описание</h3>
+                <div class="description-content">
+                    ${productData.description}
+                </div>
+            </div>
+            ` : ''}
+        `;
+        
+        // Добавляем обработчик для кнопки "Показать на карте"
+        const showMapBtn = document.querySelector('.show-map');
+        if (showMapBtn) {
+            showMapBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert(`Показать на карте: ${productData.location || 'Адрес не указан'}`);
+            });
+        }
+    }
+}
+
+// Функция для инициализации полноэкранного просмотра
+function initFullscreenModal() {
+    const modalClose = document.getElementById('modalClose');
+    const modalPrev = document.getElementById('modalPrev');
+    const modalNext = document.getElementById('modalNext');
+    const modal = document.getElementById('fullscreenModal');
+    
+    // Закрытие по клику на крестик
+    if (modalClose) {
+        modalClose.addEventListener('click', closeFullscreen);
+    }
+    
+    // Закрытие по клику на фон
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeFullscreen();
+            }
+        });
+    }
+    
+    // Навигация
+    if (modalPrev) {
+        modalPrev.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateFullscreen(-1);
+        });
+    }
+    
+    if (modalNext) {
+        modalNext.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navigateFullscreen(1);
+        });
+    }
+    
+    // Закрытие по клавише Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
+            closeFullscreen();
+        }
+        
+        // Навигация стрелками
+        if (modal && modal.classList.contains('active')) {
+            if (e.key === 'ArrowLeft') {
+                navigateFullscreen(-1);
+            } else if (e.key === 'ArrowRight') {
+                navigateFullscreen(1);
+            }
+        }
     });
 }
 
+// Основная функция инициализации для product.html
+async function initProductPage() {
+    try {
+        // Загружаем данные из JSON
+        const productData = await loadProductData();
+        
+        // Инициализируем карусель с медиафайлами
+        if (productData.media && productData.media.length > 0) {
+            initProductCarousel(productData.media);
+        } else {
+            // Если нет медиафайлов, скрываем карусель
+            const productCarousel = document.querySelector('.product-carousel');
+            if (productCarousel) {
+                productCarousel.style.display = 'none';
+            }
+        }
+        
+        // Инициализируем модальное окно
+        initFullscreenModal();
+        
+        // Отображаем данные объявления
+        displayProductData(productData);
+        
+    } catch (error) {
+        // Показываем ошибку
+        showError(error.message || 'Не удалось загрузить данные объявления');
+        
+        // Скрываем карусель при ошибке
+        const productCarousel = document.querySelector('.product-carousel');
+        if (productCarousel) {
+            productCarousel.style.display = 'none';
+        }
+    }
+}
+
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    // Общие функции для обеих страниц
+    initScrollToTop();
+    initSearchField();
+    
+    // Определяем, на какой странице мы находимся
+    if (document.querySelector('.product-grid')) {
+        // Главная страница
+        loadProducts();
+        initMainCarousel();
+    } else if (document.querySelector('.product-detail-page')) {
+        // Страница продукта
+        initProductPage();
+    }
+});
