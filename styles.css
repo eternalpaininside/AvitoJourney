@@ -76,6 +76,12 @@ main{
     justify-content: center;
     font-size: 24px;
     cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.user-icon:hover {
+    background: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
 }
 
 .carousel-wrapper {
@@ -268,9 +274,9 @@ header input {
 }
 
 .container {
-    display: flex;
-    justify-content: space-between;
     padding: 20px;
+    display: flex;
+    gap: 20px;
 }
 
 .sidebar {
@@ -302,6 +308,7 @@ header input {
 .content {
     flex-grow: 1;
     padding-left: 20px;
+    justify-content: center;
 }
 
 .product-grid {
@@ -1389,4 +1396,116 @@ header input {
 #nextBtn { 
     right: 20px; 
     margin-top: 30px;
+}
+
+.logo-link {
+    text-decoration: none;
+    display: block;
+}
+
+.logo-link .logo {
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+    color: white;
+    cursor: pointer;
+}
+
+.logo-link:hover .logo {
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+}
+
+.page-user .container {
+     display: flex;
+    gap: 30px;
+    padding: 20px;
+    align-items: stretch;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.page-user .container .sidebar {
+    min-width: 250px;
+    width: 250px;
+    background-color: white;
+    color: #333;
+    padding: 25px 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.page-user .container .sidebar h2 {
+    margin: 0 0 20px 0;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    color: #333;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+    padding-bottom: 10px;
+}
+
+.page-user .container .sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.page-user .container .sidebar li {
+    margin-bottom: 12px;
+}
+
+.page-user .container .sidebar a {
+    display: block;
+    color: #333;
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    transition: 0.3s ease, transform 0.2s ease;
+    font-size: 15px;
+}
+
+.page-user .container .sidebar a:hover {
+    background: #f0f0f0;
+    transform: translateX(5px);
+    color: #333;
+}
+
+.page-user .content {
+    flex: 1;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+}
+
+.logout-container {
+    margin-top: auto;
+    text-align: center;
+    padding: 15px 0 10px;
+    border-top: 1px solid #eee;
+}
+
+.page-user .container .sidebar .logout-container .logout-btn {
+    color: #d32f2f;
+    font-size: 15px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    background-color: transparent; 
+    cursor: pointer;
+}
+
+.page-user .container .logout-btn:hover {
+    background-color: #ffebee;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(104, 53, 53, 0.075);
 }
