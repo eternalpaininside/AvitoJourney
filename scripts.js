@@ -1,3 +1,15 @@
+function safeImage(src, alt, classes = '') {
+    return `
+        <img 
+            src="${src}" 
+            alt="${alt}" 
+            class="${classes}" 
+            onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Фото+недоступно'" 
+            loading="lazy"
+        >
+    `;
+}
+
 // Функция для загрузки продуктов на главной странице
 async function loadProducts() {
     try {
@@ -15,7 +27,7 @@ async function loadProducts() {
                 
                 productElement.innerHTML = `
                     <a href="product.html?id=${product.id}" class="product-link">
-                        <img src="${product.image}" alt="${product.name}" onerror="this.src='https://via.placeholder.com/300x200?text=Фото+нет'">
+                        ${safeImage(product.image, product.name, 'product-image')}
                         <div class="title-container">
                             <h3>${product.name}</h3>
                         </div>
@@ -30,7 +42,7 @@ async function loadProducts() {
                 productGrid.appendChild(productElement);
             });
 
-            // Добавляем обработчики кликов на карточки
+            // Обработчики кликов по карточкам
             document.querySelectorAll('.product-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -163,13 +175,11 @@ function initSearchField() {
     if (searchInput) {
         const originalPlaceholder = searchInput.placeholder;
         
-        // При фокусе убираем эмодзи
         searchInput.addEventListener('focus', function() {
             this.classList.add('no-emoji', 'search-focused');
             this.placeholder = originalPlaceholder.replace('🔍 ', '').replace('🔍', '');
         });
         
-        // При потере фокуса возвращаем эмодзи, если поле пустое
         searchInput.addEventListener('blur', function() {
             if (this.value === '') {
                 this.classList.remove('no-emoji', 'search-focused');
@@ -177,7 +187,6 @@ function initSearchField() {
             }
         });
         
-        // Обработка отправки поиска
         searchInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -192,20 +201,11 @@ function initSearchField() {
     }
 }
 
-// Функции для страницы product.html
-// Получаем ID продукта из URL
-function getProductIdFromURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get('id');
-}
-
-// Функция для загрузки данных из JSON файла
+// Загрузка данных из JSON
 async function loadProductData() {
     try {
         const response = await fetch('product.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         const productData = await response.json();
         return productData;
     } catch (error) {
@@ -214,7 +214,7 @@ async function loadProductData() {
     }
 }
 
-// Функция для отображения ошибки
+// Показ ошибки
 function showError(message) {
     const productInfo = document.getElementById('productInfo');
     if (productInfo) {
@@ -231,11 +231,11 @@ function showError(message) {
     }
 }
 
-// Глобальные переменные для управления полноэкранным просмотром
+// Переменные для полноэкранного просмотра
 let currentMediaItems = [];
 let currentFullscreenIndex = 0;
 
-// Функция для открытия медиафайла в полноэкранном режиме
+// Открыть в полноэкранном режиме
 function openFullscreen(index) {
     const modal = document.getElementById('fullscreenModal');
     const modalContent = document.getElementById('modalContent');
@@ -244,10 +244,8 @@ function openFullscreen(index) {
     currentFullscreenIndex = index;
     const mediaItem = currentMediaItems[index];
     
-    // Очищаем содержимое
     modalContent.innerHTML = '';
     
-    // Создаем элемент в зависимости от типа медиа
     if (mediaItem.type === 'image') {
         const img = document.createElement('img');
         img.src = mediaItem.url;
@@ -261,51 +259,35 @@ function openFullscreen(index) {
         modalContent.appendChild(video);
     }
     
-    // Обновляем счетчик
     if (modalCounter) {
         modalCounter.textContent = `${index + 1}/${currentMediaItems.length}`;
     }
     
-    // Показываем модальное окно
     modal.classList.add('active');
-    
-    // Блокируем прокрутку фона
     document.body.style.overflow = 'hidden';
 }
 
-// Функция для закрытия полноэкранного режима
+// Закрыть полноэкранный режим
 function closeFullscreen() {
     const modal = document.getElementById('fullscreenModal');
     const modalContent = document.getElementById('modalContent');
     
-    // Останавливаем видео, если оно воспроизводится
     const video = modalContent.querySelector('video');
-    if (video) {
-        video.pause();
-    }
+    if (video) video.pause();
     
-    // Скрываем модальное окно
     modal.classList.remove('active');
-    
-    // Восстанавливаем прокрутку фона
     document.body.style.overflow = 'auto';
 }
 
-// Функция для навигации по медиа в полноэкранном режиме
+// Навигация в полноэкранном режиме
 function navigateFullscreen(direction) {
     let newIndex = currentFullscreenIndex + direction;
-    
-    // Зацикливаем навигацию
-    if (newIndex < 0) {
-        newIndex = currentMediaItems.length - 1;
-    } else if (newIndex >= currentMediaItems.length) {
-        newIndex = 0;
-    }
-    
+    if (newIndex < 0) newIndex = currentMediaItems.length - 1;
+    if (newIndex >= currentMediaItems.length) newIndex = 0;
     openFullscreen(newIndex);
 }
 
-// Функция для инициализации карусели продукта
+// Инициализация карусели медиа
 function initProductCarousel(mediaItems) {
     const carouselTrack = document.getElementById('carouselTrack');
     const indicatorsContainer = document.getElementById('indicators');
@@ -315,51 +297,32 @@ function initProductCarousel(mediaItems) {
     
     if (!carouselTrack || !indicatorsContainer) return;
     
-    // Сохраняем медиафайлы для полноэкранного просмотра
     currentMediaItems = mediaItems;
-    
-    // Очищаем карусель
     carouselTrack.innerHTML = '';
     
-    // Заполняем карусель медиафайлами
     mediaItems.forEach((mediaItem, index) => {
         const banner = document.createElement('div');
         banner.className = 'banner';
         
-        // Добавляем бейдж типа медиа
         const typeBadge = document.createElement('div');
         typeBadge.className = 'media-type-badge';
         typeBadge.textContent = mediaItem.type === 'video' ? '▶ Видео' : '📷 Фото';
         
-        // Добавляем медиа в зависимости от типа
         if (mediaItem.type === 'image') {
-            banner.innerHTML = `
-                <img src="${mediaItem.url}" alt="Фото ${index + 1}" loading="lazy">
-                <div class="media-placeholder" style="display: none;">📷</div>
-            `;
+            banner.innerHTML = safeImage(mediaItem.url, `Фото ${index + 1}`, 'carousel-image');
         } else if (mediaItem.type === 'video') {
-            banner.innerHTML = `
-                <video src="${mediaItem.url}" preload="metadata" poster="${mediaItem.thumbnail || ''}"></video>
-                <div class="media-placeholder" style="display: none;">▶</div>
-            `;
+            banner.innerHTML = `<video src="${mediaItem.url}" preload="metadata" poster="${mediaItem.thumbnail || ''}"></video>`;
         }
         
-        // Добавляем бейдж
         banner.appendChild(typeBadge);
-        
-        // Добавляем обработчик клика для открытия в полноэкранном режиме
-        banner.addEventListener('click', () => {
-            openFullscreen(index);
-        });
-        
+        banner.addEventListener('click', () => openFullscreen(index));
         carouselTrack.appendChild(banner);
     });
 
-    const banners = carouselTrack.querySelectorAll('.banner');
-    const totalBanners = banners.length;
+    const totalBanners = mediaItems.length;
     let currentIndex = 0;
     let autoPlayInterval;
-    
+
     function createIndicators() {
         indicatorsContainer.innerHTML = '';
         for (let i = 0; i < totalBanners; i++) {
@@ -370,76 +333,65 @@ function initProductCarousel(mediaItems) {
             indicatorsContainer.appendChild(dot);
         }
     }
-    
+
     function goToSlide(index) {
         currentIndex = (index + totalBanners) % totalBanners;
         updateCarousel();
         resetAutoPlay();
     }
-    
+
     function updateCarousel() {
         document.querySelectorAll('.banner').forEach((banner, index) => {
             banner.classList.remove('left', 'center', 'right');
-            
-            if (index === currentIndex) {
-                banner.classList.add('center');
-            } else if ((index - currentIndex + totalBanners) % totalBanners === 1) {
-                banner.classList.add('right');
-            } else if ((index - currentIndex + totalBanners) % totalBanners === totalBanners - 1) {
-                banner.classList.add('left');
-            }
+            if (index === currentIndex) banner.classList.add('center');
+            else if ((index - currentIndex + totalBanners) % totalBanners === 1) banner.classList.add('right');
+            else if ((index - currentIndex + totalBanners) % totalBanners === totalBanners - 1) banner.classList.add('left');
         });
         
         document.querySelectorAll('.dot').forEach((dot, index) => {
             dot.classList.toggle('active', index === currentIndex);
         });
         
-        // Обновление счетчика
         if (carouselCounter) {
             carouselCounter.textContent = `${currentIndex + 1}/${totalBanners}`;
         }
     }
-    
+
     function nextSlide() {
         currentIndex = (currentIndex + 1) % totalBanners;
         updateCarousel();
         resetAutoPlay();
     }
-    
+
     function prevSlide() {
         currentIndex = (currentIndex - 1 + totalBanners) % totalBanners;
         updateCarousel();
         resetAutoPlay();
     }
-    
+
     function startAutoPlay() {
         autoPlayInterval = setInterval(nextSlide, 5000);
     }
-    
+
     function resetAutoPlay() {
         clearInterval(autoPlayInterval);
         startAutoPlay();
     }
-    
-    // Добавляем обработчики событий
+
     if (prevBtn) prevBtn.addEventListener('click', prevSlide);
     if (nextBtn) nextBtn.addEventListener('click', nextSlide);
-    
+
     createIndicators();
     updateCarousel();
     startAutoPlay();
-    
-    // Пауза при наведении
-    if (carouselTrack) {
-        carouselTrack.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
-        carouselTrack.addEventListener('mouseleave', startAutoPlay);
-    }
+
+    carouselTrack.addEventListener('mouseenter', () => clearInterval(autoPlayInterval));
+    carouselTrack.addEventListener('mouseleave', startAutoPlay);
 }
 
-// Функция для отображения данных объявления
 function displayProductData(productData) {
     const productInfo = document.getElementById('productInfo');
-    
+
     if (productInfo) {
         productInfo.innerHTML = `
             <div class="product-header">
@@ -470,8 +422,7 @@ function displayProductData(productData) {
             </div>
             ` : ''}
         `;
-        
-        // Добавляем обработчик для кнопки "Показать на карте"
+
         const showMapBtn = document.querySelector('.show-map');
         if (showMapBtn) {
             showMapBtn.addEventListener('click', function(e) {
@@ -480,21 +431,83 @@ function displayProductData(productData) {
             });
         }
     }
+
+    const seller = productData.seller || {};
+    document.getElementById('seller-name').textContent = seller.name || 'Не указано';
+    document.getElementById('seller-role').textContent = seller.role || '';
+    document.getElementById('seller-clients').textContent = seller.clients || 0;
+
+    const ratingStars = '★'.repeat(Math.round(seller.rating)) + '☆'.repeat(5 - Math.round(seller.rating));
+    document.getElementById('seller-rating').innerHTML = `${ratingStars} <span>(${seller.rating || 0})</span>`;
+
+    const reviewsSection = document.querySelector('.reviews-section');
+    if (!reviewsSection) return;
+
+    reviewsSection.innerHTML = '<h4>Отзывы</h4>';
+
+    if (!productData.reviews || productData.reviews.length === 0) {
+        const noReviews = document.createElement('p');
+        noReviews.textContent = 'Пока нет отзывов.';
+        reviewsSection.appendChild(noReviews);
+        return;
+    }
+
+    const reviewsChat = document.createElement('div');
+    reviewsChat.className = 'reviews-chat';
+
+    productData.reviews.forEach(review => {
+        const message = document.createElement('div');
+        message.className = 'review-message';
+
+        const avatarUrl = review.avatar || 'https://via.placeholder.com/60x60?text=👤';
+
+        message.innerHTML = `
+            <div class="review-avatar">
+                <img src="${avatarUrl}" alt="${review.author}">
+            </div>
+            <div class="review-content">
+                <div class="review-author">${review.author}</div>
+                <div class="review-rating">${'★'.repeat(Math.round(review.rating))}${'☆'.repeat(5 - Math.round(review.rating))}</div>
+                <div class="review-text">«${review.text}»</div>
+                <div class="review-actions">
+                    <button class="review-like" data-review-id="${review.id}"></button>
+                    <span style="color: #aaa; font-size: 11px;">${review.date}</span>
+                </div>
+            </div>
+        `;
+        reviewsChat.appendChild(message);
+    });
+
+    reviewsSection.appendChild(reviewsChat);
+
+    const likeButtons = reviewsSection.querySelectorAll('.review-like');
+    likeButtons.forEach(btn => {
+        const id = btn.dataset.reviewId;
+        const liked = localStorage.getItem(`like_${id}`) === 'true';
+        if (liked) btn.classList.add('liked');
+
+        btn.addEventListener('click', () => {
+            if (btn.classList.contains('liked')) {
+                btn.classList.remove('liked');
+                localStorage.setItem(`like_${id}`, 'false');
+            } else {
+                btn.classList.add('liked');
+                localStorage.setItem(`like_${id}`, 'true');
+            }
+        });
+    });
 }
 
-// Функция для инициализации полноэкранного просмотра
 function initFullscreenModal() {
     const modalClose = document.getElementById('modalClose');
     const modalPrev = document.getElementById('modalPrev');
     const modalNext = document.getElementById('modalNext');
     const modal = document.getElementById('fullscreenModal');
     
-    // Закрытие по клику на крестик
     if (modalClose) {
         modalClose.addEventListener('click', closeFullscreen);
     }
     
-    // Закрытие по клику на фон
     if (modal) {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -503,7 +516,6 @@ function initFullscreenModal() {
         });
     }
     
-    // Навигация
     if (modalPrev) {
         modalPrev.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -518,13 +530,11 @@ function initFullscreenModal() {
         });
     }
     
-    // Закрытие по клавише Escape
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && modal && modal.classList.contains('active')) {
             closeFullscreen();
         }
         
-        // Навигация стрелками
         if (modal && modal.classList.contains('active')) {
             if (e.key === 'ArrowLeft') {
                 navigateFullscreen(-1);
@@ -535,34 +545,26 @@ function initFullscreenModal() {
     });
 }
 
-// Основная функция инициализации для product.html
 async function initProductPage() {
     try {
-        // Загружаем данные из JSON
         const productData = await loadProductData();
         
-        // Инициализируем карусель с медиафайлами
         if (productData.media && productData.media.length > 0) {
             initProductCarousel(productData.media);
         } else {
-            // Если нет медиафайлов, скрываем карусель
             const productCarousel = document.querySelector('.product-carousel');
             if (productCarousel) {
                 productCarousel.style.display = 'none';
             }
         }
         
-        // Инициализируем модальное окно
         initFullscreenModal();
         
-        // Отображаем данные объявления
         displayProductData(productData);
         
     } catch (error) {
-        // Показываем ошибку
         showError(error.message || 'Не удалось загрузить данные объявления');
         
-        // Скрываем карусель при ошибке
         const productCarousel = document.querySelector('.product-carousel');
         if (productCarousel) {
             productCarousel.style.display = 'none';
@@ -570,19 +572,100 @@ async function initProductPage() {
     }
 }
 
-// Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
-    // Общие функции для обеих страниц
     initScrollToTop();
     initSearchField();
     
-    // Определяем, на какой странице мы находимся
     if (document.querySelector('.product-grid')) {
-        // Главная страница
         loadProducts();
         initMainCarousel();
     } else if (document.querySelector('.product-detail-page')) {
-        // Страница продукта
         initProductPage();
     }
+});
+
+// === Форма отзыва ===
+const reviewForm = document.getElementById('reviewForm');
+const ratingStars = document.getElementById('ratingStars');
+let selectedRating = 5;
+
+ratingStars.querySelectorAll('span').forEach(star => {
+    star.addEventListener('click', function () {
+        selectedRating = parseInt(this.getAttribute('data-value'));
+        updateStars();
+        document.getElementById('rating').value = selectedRating;
+    });
+
+    star.addEventListener('mouseover', function () {
+        const value = parseInt(this.getAttribute('data-value'));
+        ratingStars.querySelectorAll('span').forEach(s => {
+            s.classList.toggle('active', parseInt(s.getAttribute('data-value')) <= value);
+        });
+    });
+
+    star.addEventListener('mouseout', () => {
+        updateStars();
+    });
+});
+
+function updateStars() {
+    ratingStars.querySelectorAll('span').forEach(s => {
+        s.classList.toggle('active', parseInt(s.getAttribute('data-value')) <= selectedRating);
+    });
+}
+
+updateStars();
+
+reviewForm?.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const author = document.getElementById('author').value.trim();
+    const rating = document.getElementById('rating').value;
+    const text = document.getElementById('reviewText').value.trim();
+
+    const newReview = {
+        id: Date.now(),
+        author: author,
+        rating: parseInt(rating),
+        text: text,
+        date: new Date().toLocaleString('ru-RU', { month: 'long', year: 'numeric' }),
+        avatar: 'https://via.placeholder.com/60x60?text=👤'
+    };
+
+    const reviewsChat = document.querySelector('.reviews-chat');
+    if (reviewsChat) {
+        const message = document.createElement('div');
+        message.className = 'review-message';
+
+        message.innerHTML = `
+            <div class="review-avatar">
+                <img src="${newReview.avatar}" alt="${newReview.author}">
+            </div>
+            <div class="review-content">
+                <div class="review-author">${newReview.author}</div>
+                <div class="review-rating">${'★'.repeat(newReview.rating)}${'☆'.repeat(5 - newReview.rating)}</div>
+                <div class="review-text">«${newReview.text}»</div>
+                <div class="review-actions">
+                    <button class="review-like" data-review-id="${newReview.id}"></button>
+                    <span style="color: #aaa; font-size: 11px;">${newReview.date}</span>
+                </div>
+            </div>
+        `;
+
+        reviewsChat.prepend(message);
+
+        const likeBtn = message.querySelector('.review-like');
+        likeBtn.addEventListener('click', function () {
+            this.classList.toggle('liked');
+            const id = this.dataset.reviewId;
+            localStorage.setItem(`like_${id}`, this.classList.contains('liked') ? 'true' : 'false');
+        });
+    }
+
+    reviewForm.reset();
+    selectedRating = 5;
+    updateStars();
+    document.getElementById('rating').value = 5;
+
+    alert('Спасибо за отзыв!');
 });
