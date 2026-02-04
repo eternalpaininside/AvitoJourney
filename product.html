@@ -17,59 +17,99 @@
         </div>
 
         <div class="product-detail-page">
-            
             <div class="product-detail-left">
                 <a href="index.html" class="back-button">Назад к объявлениям</a>
                 
-                
                 <div class="product-carousel">
+                    <button class="arrow-btn" id="prevBtn">←</button>
+
                     <div class="carousel-wrapper">
-                        <button class="arrow-btn" id="prevBtn">←</button>
-                        
                         <div class="carousel-container">
-                            <div class="carousel-track" id="carouselTrack">
-                                
-                            </div>
+                            <div class="carousel-track" id="carouselTrack"></div>
                         </div>
-                        <button class="arrow-btn" id="nextBtn">→</button>
                         <div class="indicators" id="indicators"></div>
-                        <div class="carousel-counter" id="carouselCounter">1/5</div>
+                        <div class="carousel-counter" id="carouselCounter">1/3</div>
                     </div>
+
+                    <button class="arrow-btn" id="nextBtn">→</button>
                 </div>
-                
-                
+
                 <div class="product-info-container" id="productInfo">
                     <div class="loading">
                         <div style="font-size: 48px; margin-bottom: 20px;">⏳</div>
                         <p>Загрузка данных объявления...</p>
                     </div>
                 </div>
+
+                
             </div>
             
-            
             <div class="product-detail-right">
-                <div class="empty-sidebar">
-                    <h3>Место </h3>
-                    <p></p>
-                    <div style="margin-top: 30px; font-size: 48px; color: #ccc;">
-                        📍
+                <div class="action-buttons">
+                    <button class="book-button book-top">📅 Забронировать сейчас</button>
+                    <div class="contact-buttons">
+                        <button class="contact-btn chat">💬 Написать</button>
+                        <button class="contact-btn call">📞 Позвонить</button>
                     </div>
-                    <p style="margin-top: 20px; font-size: 12px; color: #999;">
-                        Это пространство 
-                    </p>
                 </div>
+                <div class="seller-info">
+                    <div class="seller-profile">
+                        <div class="avatar">
+                            <img src="images/avatar-ivan.jpg" alt="Иван Петров" onerror="this.src='https://via.placeholder.com/60x60?text=👤'">
+                        </div>
+                        <h3 id="seller-name">Иван Петров</h3>
+                        <p class="role" id="seller-role">Опытный гид</p>
+                        <div class="stats">
+                            <div><strong id="seller-clients">58</strong> клиентов</div>
+                            <div class="rating" id="seller-rating">★★★★★ <span>(4.9)</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="reviews-section"></div>
+                <!-- Форма добавления отзыва -->
+<div class="review-form-container">
+    <h4>Оставить отзыв</h4>
+    <form id="reviewForm" class="review-form">
+        <div class="form-group">
+            <label for="author">Ваше имя</label>
+            <input type="text" id="author" name="author" placeholder="Введите ваше имя" required>
+        </div>
+
+        <div class="form-group">
+            <label>Оценка</label>
+            <div class="rating-stars" id="ratingStars">
+                <span data-value="1">★</span>
+                <span data-value="2">★</span>
+                <span data-value="3">★</span>
+                <span data-value="4">★</span>
+                <span data-value="5">★</span>
+            </div>
+            <input type="hidden" id="rating" name="rating" value="5" required>
+        </div>
+
+        <div class="form-group">
+            <label for="reviewText">Ваш отзыв</label>
+            <textarea 
+                id="reviewText" 
+                name="reviewText" 
+                rows="4" 
+                placeholder="Поделитесь своим впечатлением..." 
+                required></textarea>
+        </div>
+
+        <button type="submit" class="submit-review-btn">Отправить отзыв</button>
+    </form>
+</div>
             </div>
         </div>
         
-        
+        <!-- Модальное окно для фото/видео -->
         <div class="fullscreen-modal" id="fullscreenModal">
             <div class="modal-close" id="modalClose">&times;</div>
             <div class="modal-nav prev" id="modalPrev">‹</div>
             <div class="modal-nav next" id="modalNext">›</div>
-            <div class="modal-content" id="modalContent">
-                
-            </div>
-            <div class="modal-counter" id="modalCounter">1/5</div>
+            <div class="modal-content" id="modalContent"></div>
+            <div class="modal-counter" id="modalCounter">1/3</div>
         </div>
     </main>
     
@@ -109,5 +149,4 @@
     
     <script src="scripts.js"></script>
 </body>
-
 </html>
