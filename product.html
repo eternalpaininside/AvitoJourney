@@ -11,9 +11,11 @@
         <div class="header">
             <div class="logo">PLACE<br>HOLDER</div>
             <div class="search-container">
-                <input type="text" class="search-input" placeholder="🔍 Поиск объявлений" id="searchInput">
+                <input type="text" class="search-input" placeholder="🔍" id="searchInput">
             </div>
-            <div class="user-icon">👤</div>
+            <a href="user.html" class="user-icon-link" aria-label="Мой профиль">
+                <div class="user-icon" onclick="location.href='user.html'">👤</div>
+            </a>
         </div>
 
         <div class="product-detail-page">
@@ -66,7 +68,6 @@
                     </div>
                 </div>
                 <div class="reviews-section"></div>
-                <!-- Форма добавления отзыва -->
 <div class="review-form-container">
     <h4>Оставить отзыв</h4>
     <form id="reviewForm" class="review-form">
