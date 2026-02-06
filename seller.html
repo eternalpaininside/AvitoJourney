@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль продавца - ТужорниПерни</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="page-user">
+    <main>
+        <div class="header">
+            <a href="index.html" class="logo-link">
+                <div class="logo">PLACE<br>HOLDER</div>
+            </a>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="🔍" id="searchInput">
+            </div>
+            <div class="user-icon" onclick="location.href='user.html'">👤</div>
+        </div>
+
+        <div class="container">
+            <div class="sidebar">
+                <h2>Профиль продавца</h2>
+                <ul>
+                    <li><a href="#profile">Информация</a></li>
+                    <li><a href="#services">Услуги</a></li>
+                    <li><a href="#reviews">Отзывы</a></li>
+                    <li><a href="#contact">Контакты</a></li>
+                </ul>
+                <div class="logout-container">
+                    <button class="logout-btn" onclick="window.history.back()">← Назад к объявлению</button>
+                </div>
+            </div>
+            
+            <div class="content">
+                <div class="seller-detail-content">
+                    <!-- Информация о продавце -->
+                    <div class="seller-profile-section" id="profile">
+                        <div class="seller-header">
+                            <div class="seller-avatar">
+                                <img src="https://via.placeholder.com/120x120?text=👤" alt="Константин Плотников" 
+                                     onerror="this.src='https://via.placeholder.com/120x120?text=👤'">
+                            </div>
+                            <div class="seller-info">
+                                <h1>Константин Плотников</h1>
+                                <p class="seller-role">Частный предприниматель</p>
+                                <div class="seller-rating">
+                                    <span class="stars">★★★★★</span>
+                                    <span class="rating-value">5.0</span>
+                                </div>
+                                <div class="seller-stats">
+                                    <div class="stat-item">
+                                        <span class="stat-value">58</span>
+                                        <span class="stat-label">клиентов</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-value">42</span>
+                                        <span class="stat-label">услуги</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="stat-value">3</span>
+                                        <span class="stat-label">года</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="action-buttons seller-actions">
+                            <button class="contact-btn chat" onclick="alert('Открыть чат с Константином')">
+                                💬 Написать
+                            </button>
+                            <button class="contact-btn call" onclick="alert('Позвонить Константину')">
+                                📞 Позвонить
+                            </button>
+                        </div>
+                        
+                        <div class="seller-description">
+                            <h3>О себе</h3>
+                            <p>Предоставляю услуги гида по Перми и Пермскому краю. Организую экскурсии, походы и активный отдых. Более 3 лет опыта работы с туристами.</p>
+                            <div class="seller-tags">
+                                <span class="tag">Гид</span>
+                                <span class="tag">Экскурсовод</span>
+                                <span class="tag">Организатор</span>
+                                <span class="tag">Пермь</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Услуги продавца -->
+                    <div class="seller-services-section" id="services">
+                        <h2>Предлагаемые услуги</h2>
+                        <div class="product-grid seller-products">
+                            <!-- Услуги будут загружены через JavaScript -->
+                            <div class="loading">Загрузка услуг...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Отзывы о продавце -->
+                    <div class="seller-reviews-section" id="reviews">
+                        <h2>Отзывы клиентов</h2>
+                        <div class="reviews-chat">
+                            <div class="review-message">
+                                <div class="review-avatar">
+                                    <img src="https://via.placeholder.com/60x60?text=М" alt="Мария">
+                                </div>
+                                <div class="review-content">
+                                    <div class="review-author">Мария</div>
+                                    <div class="review-rating">★★★★★</div>
+                                    <div class="review-text">«Отличная экскурсия! Константин - настоящий профессионал. Узнали много интересного о городе.»</div>
+                                    <div class="review-actions">
+                                        <span class="review-date">Март 2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="review-message">
+                                <div class="review-avatar">
+                                    <img src="https://via.placeholder.com/60x60?text=А" alt="Алексей">
+                                </div>
+                                <div class="review-content">
+                                    <div class="review-author">Алексей</div>
+                                    <div class="review-rating">★★★★★</div>
+                                    <div class="review-text">«Организовал поход на плато Мань-Пупу-Нёр. Всё было на высшем уровне, безопасно и интересно.»</div>
+                                    <div class="review-actions">
+                                        <span class="review-date">Февраль 2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="review-message">
+                                <div class="review-avatar">
+                                    <img src="https://via.placeholder.com/60x60?text=Е" alt="Екатерина">
+                                </div>
+                                <div class="review-content">
+                                    <div class="review-author">Екатерина</div>
+                                    <div class="review-rating">★★★★☆</div>
+                                    <div class="review-text">«Хорошая экскурсия по историческому центру. Интересные факты, приятная подача.»</div>
+                                    <div class="review-actions">
+                                        <span class="review-date">Январь 2026</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Контакты -->
+                    <div class="seller-contact-section" id="contact">
+                        <h2>Контактная информация</h2>
+                        <div class="contact-info">
+                            <div class="contact-item">
+                                <span class="contact-icon">📱</span>
+                                <span class="contact-text">+7 (912) 345-67-89</span>
+                            </div>
+                            <div class="contact-item">
+                                <span class="contact-icon">✉️</span>
+                                <span class="contact-text">konstantin@example.com</span>
+                            </div>
+                            <div class="contact-item">
+                                <span class="contact-icon">📍</span>
+                                <span class="contact-text">г. Пермь, ул. Ленина, д. 15</span>
+                            </div>
+                            <div class="contact-item">
+                                <span class="contact-icon">🕒</span>
+                                <span class="contact-text">Пн-Пт: 9:00-18:00, Сб: 10:00-16:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>О компании</h3>
+                <p>ТужорниПерни — ваш надёжный помощник в мире путешествий. Работаем с 2026 года.</p>
+                <p>ИНН: 1234567890<br>
+                    ОГРН: 1234567890123<br>
+                    г. Пермь, ул. Аллея, д. 228</p>
+            </div>
+            <div class="footer-section">
+                <h3>Политика</h3>
+                <ul>
+                    <li><a href="#">Политика конфиденциальности</a></li>
+                    <li><a href="#">Условия использования</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Мы в соцсетях</h3>
+                <div class="social-links">
+                    <a href="#" aria-label="Telegram">📱 Telegram</a><br>
+                    <a href="#" aria-label="YouTube">▶️ YouTube</a><br>
+                    <a href="#" aria-label="VK">♿️ VK</a><br>
+                    <a href="#" aria-label="Instagram">📷 Instagram</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <a href="#" class="scroll-to-top" aria-label="Наверх"></a>
+    
+    <div class="footer-bottom">
+        <p>&copy; 2026 ТужорниПерни. Все права защищены.</p>
+    </div>
+    
+    <script src="scripts.js"></script>
+    <script>
+        // Дополнительный стиль для страницы продавца
+        const style = document.createElement('style');
+        style.textContent = `
+            .seller-detail-content {
+                width: 100%;
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 20px;
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            initScrollToTop();
+            initSearchField();
+            
+            // Загрузка услуг продавца
+            loadSellerProducts();
+        });
+        
+        // Функция для загрузки услуг продавца
+        async function loadSellerProducts() {
+            try {
+                const response = await fetch('products.json');
+                const products = await response.json();
+                const productGrid = document.querySelector('.seller-products');
+                
+                if (productGrid) {
+                    // Фильтруем услуги продавца (в реальном приложении по ID продавца)
+                    const sellerProducts = products.slice(0, 3); // Пример: первые 3 услуги
+                    
+                    productGrid.innerHTML = '';
+                    
+                    sellerProducts.forEach(product => {
+                        const productElement = document.createElement('div');
+                        productElement.className = 'product';
+                        productElement.setAttribute('data-product-id', product.id);
+                        
+                        productElement.innerHTML = `
+                            <a href="product.html?id=${product.id}" class="product-link">
+                                ${safeImage(product.image, product.name, 'product-image')}
+                                <div class="title-container">
+                                    <h3>${product.name}</h3>
+                                </div>
+                                <p>${product.description}</p>
+                                <div class="product-price-preview">
+                                    <span class="price">${product.price || 'Цена не указана'} ${product.currency || 'Руб.'}</span>
+                                    <span class="location">📍 ${product.location || 'Местоположение не указано'}</span>
+                                </div>
+                            </a>
+                        `;
+                        
+                        productGrid.appendChild(productElement);
+                    });
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки услуг:', error);
+                const productGrid = document.querySelector('.seller-products');
+                if (productGrid) {
+                    productGrid.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: #666;">
+                            <p>Не удалось загрузить услуги продавца.</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
