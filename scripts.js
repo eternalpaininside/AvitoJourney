@@ -572,6 +572,146 @@ async function initProductPage() {
     }
 }
 
+// === Функции для обработки лайков отзывов ===
+function initReviewLikes() {
+    const likeButtons = document.querySelectorAll('.review-like');
+    likeButtons.forEach(btn => {
+        const id = btn.dataset.reviewId;
+        const liked = localStorage.getItem(`like_${id}`) === 'true';
+        if (liked) {
+            btn.classList.add('liked');
+            btn.setAttribute('aria-label', 'Убрать лайк');
+            btn.setAttribute('title', 'Убрать лайк');
+        }
+        
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (btn.classList.contains('liked')) {
+                btn.classList.remove('liked');
+                btn.setAttribute('aria-label', 'Нравится');
+                btn.setAttribute('title', 'Поставить лайк');
+                localStorage.setItem(`like_${id}`, 'false');
+            } else {
+                btn.classList.add('liked');
+                btn.setAttribute('aria-label', 'Убрать лайк');
+                btn.setAttribute('title', 'Убрать лайк');
+                localStorage.setItem(`like_${id}`, 'true');
+            }
+        });
+    });
+}
+
+// === Функции для формы отзыва ===
+function initReviewForm() {
+    const reviewForm = document.getElementById('reviewForm');
+    const ratingStars = document.getElementById('ratingStars');
+    
+    if (!reviewForm || !ratingStars) return;
+    
+    let selectedRating = 5;
+    
+    ratingStars.querySelectorAll('span').forEach(star => {
+        star.addEventListener('click', function() {
+            selectedRating = parseInt(this.getAttribute('data-value'));
+            updateStars();
+            document.getElementById('rating').value = selectedRating;
+        });
+        
+        star.addEventListener('mouseover', function() {
+            const value = parseInt(this.getAttribute('data-value'));
+            ratingStars.querySelectorAll('span').forEach(s => {
+                s.classList.toggle('active', parseInt(s.getAttribute('data-value')) <= value);
+            });
+        });
+        
+        star.addEventListener('mouseout', () => {
+            updateStars();
+        });
+    });
+    
+    function updateStars() {
+        ratingStars.querySelectorAll('span').forEach(s => {
+            s.classList.toggle('active', parseInt(s.getAttribute('data-value')) <= selectedRating);
+        });
+    }
+    
+    updateStars();
+    
+    reviewForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const author = document.getElementById('author').value.trim();
+        const rating = document.getElementById('rating').value;
+        const text = document.getElementById('reviewText').value.trim();
+        
+        const newReview = {
+            id: Date.now(),
+            author: author,
+            rating: parseInt(rating),
+            text: text,
+            date: new Date().toLocaleString('ru-RU', { month: 'long', year: 'numeric' }),
+            avatar: 'https://via.placeholder.com/60x60?text=👤'
+        };
+        
+        const reviewsChat = document.querySelector('.reviews-chat');
+        if (reviewsChat) {
+            const message = document.createElement('div');
+            message.className = 'review-message';
+            
+            message.innerHTML = `
+                <div class="review-avatar">
+                    <img src="${newReview.avatar}" alt="${newReview.author}">
+                </div>
+                <div class="review-content">
+                    <div class="review-author">${newReview.author}</div>
+                    <div class="review-rating">${'★'.repeat(newReview.rating)}${'☆'.repeat(5 - newReview.rating)}</div>
+                    <div class="review-text">«${newReview.text}»</div>
+                    <div class="review-actions">
+                        <button class="review-like" data-review-id="${newReview.id}"></button>
+                        <span style="color: #aaa; font-size: 11px;">${newReview.date}</span>
+                    </div>
+                </div>
+            `;
+            
+            reviewsChat.prepend(message);
+            
+            const likeBtn = message.querySelector('.review-like');
+            likeBtn.addEventListener('click', function() {
+                this.classList.toggle('liked');
+                const id = this.dataset.reviewId;
+                localStorage.setItem(`like_${id}`, this.classList.contains('liked') ? 'true' : 'false');
+            });
+        }
+        
+        reviewForm.reset();
+        selectedRating = 5;
+        updateStars();
+        document.getElementById('rating').value = 5;
+        
+        alert('Спасибо за отзыв!');
+    });
+}
+
+// === Функция для sticky колонки ===
+function initStickyColumn() {
+    const rightColumn = document.querySelector('.product-detail-right');
+    if (!rightColumn) return;
+    
+    window.addEventListener('scroll', function() {
+        if (window.innerWidth > 1200) {
+            const scrollTop = window.pageYOffset;
+            const pageTop = document.querySelector('.product-detail-page').offsetTop;
+            
+            if (scrollTop > pageTop + 100) {
+                rightColumn.classList.add('sticky');
+            } else {
+                rightColumn.classList.remove('sticky');
+            }
+        }
+    });
+}
+
+// === Основная инициализация ===
 document.addEventListener('DOMContentLoaded', function() {
     initScrollToTop();
     initSearchField();
@@ -581,91 +721,21 @@ document.addEventListener('DOMContentLoaded', function() {
         initMainCarousel();
     } else if (document.querySelector('.product-detail-page')) {
         initProductPage();
+        initReviewLikes();
+        initReviewForm();
+        initStickyColumn();
     }
 });
 
-// === Форма отзыва ===
-const reviewForm = document.getElementById('reviewForm');
-const ratingStars = document.getElementById('ratingStars');
-let selectedRating = 5;
-
-ratingStars.querySelectorAll('span').forEach(star => {
-    star.addEventListener('click', function () {
-        selectedRating = parseInt(this.getAttribute('data-value'));
-        updateStars();
-        document.getElementById('rating').value = selectedRating;
-    });
-
-    star.addEventListener('mouseover', function () {
-        const value = parseInt(this.getAttribute('data-value'));
-        ratingStars.querySelectorAll('span').forEach(s => {
-            s.classList.toggle('active', parseInt(s.getAttribute('data-value')) <= value);
-        });
-    });
-
-    star.addEventListener('mouseout', () => {
-        updateStars();
-    });
-});
-
-function updateStars() {
-    ratingStars.querySelectorAll('span').forEach(s => {
-        s.classList.toggle('active', parseInt(s.getAttribute('data-value')) <= selectedRating);
-    });
-}
-
-updateStars();
-
-reviewForm?.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    const author = document.getElementById('author').value.trim();
-    const rating = document.getElementById('rating').value;
-    const text = document.getElementById('reviewText').value.trim();
-
-    const newReview = {
-        id: Date.now(),
-        author: author,
-        rating: parseInt(rating),
-        text: text,
-        date: new Date().toLocaleString('ru-RU', { month: 'long', year: 'numeric' }),
-        avatar: 'https://via.placeholder.com/60x60?text=👤'
-    };
-
-    const reviewsChat = document.querySelector('.reviews-chat');
-    if (reviewsChat) {
-        const message = document.createElement('div');
-        message.className = 'review-message';
-
-        message.innerHTML = `
-            <div class="review-avatar">
-                <img src="${newReview.avatar}" alt="${newReview.author}">
-            </div>
-            <div class="review-content">
-                <div class="review-author">${newReview.author}</div>
-                <div class="review-rating">${'★'.repeat(newReview.rating)}${'☆'.repeat(5 - newReview.rating)}</div>
-                <div class="review-text">«${newReview.text}»</div>
-                <div class="review-actions">
-                    <button class="review-like" data-review-id="${newReview.id}"></button>
-                    <span style="color: #aaa; font-size: 11px;">${newReview.date}</span>
-                </div>
-            </div>
-        `;
-
-        reviewsChat.prepend(message);
-
-        const likeBtn = message.querySelector('.review-like');
-        likeBtn.addEventListener('click', function () {
-            this.classList.toggle('liked');
-            const id = this.dataset.reviewId;
-            localStorage.setItem(`like_${id}`, this.classList.contains('liked') ? 'true' : 'false');
-        });
-    }
-
-    reviewForm.reset();
-    selectedRating = 5;
-    updateStars();
-    document.getElementById('rating').value = 5;
-
-    alert('Спасибо за отзыв!');
-});
+// Функция безопасного отображения изображения (глобальная)
+window.safeImage = function(src, alt, classes = '') {
+    return `
+        <img 
+            src="${src}" 
+            alt="${alt}" 
+            class="${classes}" 
+            onerror="this.onerror=null; this.src='https://via.placeholder.com/300x200?text=Фото+недоступно'" 
+            loading="lazy"
+        >
+    `;
+};
