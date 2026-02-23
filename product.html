@@ -21,20 +21,15 @@
         <div class="product-detail-page">
             <div class="product-detail-left">
                 <a href="index.html" class="back-button"> Назад к объявлениям</a>
-                
-               
-                <div class="product-carousel">
+
+                <div class="carousel-wrapper">
                     <button class="arrow-btn" id="prevBtn">←</button>
-                    
-                    <div class="carousel-wrapper">
-                        <div class="carousel-container">
-                            <div class="carousel-track" id="carouselTrack"></div>
-                        </div>
-                        <div class="indicators" id="indicators"></div>
-                        <div class="carousel-counter" id="carouselCounter">1/3</div>
+
+                    <div class="carousel-container">
+                        <div class="carousel-track" id="carouselTrack"></div>
                     </div>
-                    
                     <button class="arrow-btn" id="nextBtn">→</button>
+                    <div class="indicators" id="indicators"></div>
                 </div>
 
                 <div class="product-info-container" id="productInfo">
@@ -43,11 +38,31 @@
                         <p>Загрузка данных объявления...</p>
                     </div>
                 </div>
+
+                <!-- Блок бронирования времени -->
+                <div class="booking-section" id="bookingSection" style="display: none;">
+                    <h3 class="booking-title">📅 Выберите время бронирования</h3>
+                    <div class="booking-date-selector">
+                        <label for="bookingDate">Дата:</label>
+                        <input type="date" id="bookingDate" class="booking-date-input">
+                    </div>
+                    <div class="booking-time-grid" id="bookingTimeGrid">
+                        <div class="loading-times">Загрузка доступного времени...</div>
+                    </div>
+                    <div class="booking-confirm" id="bookingConfirm" style="display: none;">
+                        <p class="booking-selected-text">Выбрано время: <span id="selectedTimeText"></span></p>
+                        <button class="booking-submit-btn" id="bookingSubmitBtn">Подтвердить бронирование</button>
+                    </div>
+                </div>
             </div>
             
             <div class="product-detail-right">
                 <div class="action-buttons">
                     <button class="book-button book-top">📅 Забронировать сейчас</button>
+                    <button class="favorite-btn" id="favoriteBtn" aria-label="Добавить в избранное">
+                        <span class="favorite-icon">☆</span>
+                        <span class="favorite-text">В избранное</span>
+                    </button>
                     <div class="contact-buttons">
                         <button class="contact-btn chat">💬 Написать</button>
                         <button class="contact-btn call">📞 Позвонить</button>
